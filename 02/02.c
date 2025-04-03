@@ -1,49 +1,35 @@
 #include <stdio.h>
-#include <limits.h>
+#include <stdlib.h>
 
-/*
-3중
-*/
-
-int my_max(int a, int b) {
-    if (a >= b)
-        return a;
-    return b;
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
 }
-
-int my_min(int a, int b) {
-    if (a > b)
-        return b;
-    return a;
-}
-
 
 int main() {
     int n, m;
-
     scanf("%d %d", &n, &m);
-    
-    int num[n];
+
+    int card[n];
     for (int i = 0; i < n; i++) {
-        scanf("%d", &num[i]);
+        scanf("%d", &card[i]);
     }
-    
-    int sum = 0;
-    int distance = INT_MAX;                                 // 합과 m과의 차이
-    int answer = 0;
+
+    // 오름차순 정렬
+    qsort(card, n, sizeof(int), compare);
+
+    int max_sum = 0;
+
     for (int i = 0; i < n - 2; i++) {
         for (int j = i + 1; j < n - 1; j++) {
-            for (int k = j + 1; k < n; k++) {
-                sum = num[i] + num[j] + num[k];              // 합
-                int tmp = my_max(sum, m) - my_min(sum, m);   // 현재 합과 m과의 차이
-                if (tmp < distance) {
-                    distance = tmp;
-                    answer = sum;
-                }
+            for (int k = n - 1; k > j; k--) {
+                int sum = card[i] + card[j] + card[k];
+                if (sum > m) continue; // 블랙잭 룰 위반
+                if (sum > max_sum) max_sum = sum;
+                break; // k 더 줄이면 sum 더 작아지니 break
             }
         }
     }
-    printf("%d\n", answer);
 
+    printf("%d\n", max_sum);
     return 0;
 }
